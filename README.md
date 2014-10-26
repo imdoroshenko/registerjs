@@ -15,7 +15,7 @@ var Greeter = function ($greetOutputMethod, $greetPharse) {
   this.pharse = $greetPharse;
 };
 Greeter.prototype.greet = function (name) {
-  this.outputMethod(pharse + ' ' + name + '!');
+  this.outputMethod(this.pharse + ' ' + name + '!');
 };
 // console output method
 var consoleOut = function (str) {
