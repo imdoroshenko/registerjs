@@ -198,7 +198,7 @@ rg.registerClasses(
 );
 // Electricity does not have any dependencies
 // and we want to use single instance of it in all our classes
-// so lets register in like simple injection
+// so lets register it like simple injection
 rg.registerInjections(
     ['electricity', new Electricity()],
     ['coffee', 'Jacobs']
