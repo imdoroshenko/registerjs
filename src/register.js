@@ -19,9 +19,16 @@ Register.prototype = {
         return this;
     },
     registerInjections : function(injections){
-        for(var name in injections){
-            if(injections.hasOwnProperty(name)){
-                this.registerInjection(name, injections[name]);
+        if (Array.isArray(injections)) {
+            var args = Array.prototype.slice.call(arguments);
+            for(var i = 0, ln = args.length; i < ln; i++){
+                this.registerInjection(args[i][0], args[i][1]);
+            }
+        } else {
+            for(var name in injections){
+                if(injections.hasOwnProperty(name)){
+                    this.registerInjection(name, injections[name]);
+                }
             }
         }
         return this;

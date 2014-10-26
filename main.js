@@ -19,9 +19,16 @@ Register.prototype = {
         return this;
     },
     registerInjections : function(injections){
-        for(var name in injections){
-            if(injections.hasOwnProperty(name)){
-                this.registerInjection(name, injections[name]);
+        if (Array.isArray(injections)) {
+            var args = Array.prototype.slice.call(arguments);
+            for(var i = 0, ln = args.length; i < ln; i++){
+                this.registerInjection(args[i][0], args[i][1]);
+            }
+        } else {
+            for(var name in injections){
+                if(injections.hasOwnProperty(name)){
+                    this.registerInjection(name, injections[name]);
+                }
             }
         }
         return this;
@@ -96,10 +103,13 @@ RegisterClass.prototype = {
                 ? (this._ownInjections[name] || this._globalInjections[name] || this._extract(name) || null)
                 : this.undefined;
             if(entity && entity instanceof this.static){
-                entity = entity.getConstructor();
+                entity = name[0].toUpperCase() === name[0]
+                    ? entity.getConstructor()
+                    : entity.getInstance();
             }
             extractedInjections.push(entity);
         }
         return extractedInjections;
     }
 };
+var rg = new Register();

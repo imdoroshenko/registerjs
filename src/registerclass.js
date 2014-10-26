@@ -63,7 +63,9 @@ RegisterClass.prototype = {
                 ? (this._ownInjections[name] || this._globalInjections[name] || this._extract(name) || null)
                 : this.undefined;
             if(entity && entity instanceof this.static){
-                entity = entity.getConstructor();
+                entity = name[0].toUpperCase() === name[0]
+                    ? entity.getConstructor()
+                    : entity.getInstance();
             }
             extractedInjections.push(entity);
         }

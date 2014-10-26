@@ -1,34 +1,90 @@
-var register = new Register();
-var user = {name : 'Victor'};
-var greet = 'Hello ';
-var A = function($greet, $user){
-    console.log(arguments);
-    this.greet = $greet||'';
-    this.user = $user||{name : 'Yan'};
+/**
+ * CoffeeMaker
+ * @param {Grinder} $grinder
+ * @param {Pump} $pump
+ */
+var CoffeeMaker = function ($grinder, $pump) {
+    console.log($grinder, $pump);
+    this.grinder = $grinder;
+    this.pump = $pump;
 };
-A.prototype.say = function(){
-    console.log(this.greet.concat(' ', this.user.name, '!'));
+CoffeeMaker.prototype.brew = function (name) {
+    console.log('brewing coffee for ' + name);
+    this.grinder.grind();
+    this.pump.pump();
+};
+/**
+ * Electricity class
+ */
+var Electricity = function () {
+};
+Electricity.prototype.use = function (user) {
+    console.log('electricity used by ' + user);
+};
+/**
+ * Grinder
+ * @param {Electricity} $electricity
+ * @param {String} $coffee
+ */
+var Grinder = function ($electricity, $coffee) {
+    this.electricity = $electricity;
+    this.coffee = $coffee;
+};
+Grinder.prototype.grind = function () {
+    this.electricity.use('Grinder');
+    console.log('Coffee ' + this.coffee + ' is grind in Grinder');
+};
+/**
+ * Heater
+ * @param {Electricity} $electricity
+ */
+var Heater = function ($electricity) {
+    this.electricity = $electricity;
+};
+Heater.prototype.boil = function () {
+    this.electricity.use('Heater');
+    console.log('boil water in Heater');
+};
+/**
+ * Pump
+ * @param {Heater} $heater
+ * @param {Electricity} $electricity
+ */
+var Pump = function ($heater, $electricity) {
+    this.heater = $heater;
+    this.electricity = $electricity;
+};
+Pump.prototype.pump = function () {
+    console.log('Pump water trough Heater');
+    this.electricity.use('Pump');
+    this.heater.boil();
 };
 
-var B = function (
-    $Greeter,
-    test,
-    $huemoe,
-    $greet,
-    a,
-    $b
-    ){
-    console.log(arguments);
-    this.greeter = new $Greeter();
-};
-B.prototype.greet = function(){
-    this.greeter.say();
-};
+rg.registerClasses(
+    ['coffeeMaker', CoffeeMaker],
+    ['grinder', Grinder],
+    ['heater', Heater],
+    ['pump', Pump]
+);
+/**
+ * Electricity does not have any dependencies
+ * and we want to use single instance of it in all our classes
+ * so lets register in like simple injection
+ */
 
-register.registerClasses(
-    ['Greeter', A],
-    ['Main', B]
+rg.registerInjections(
+    ['electricity', new Electricity()],
+    ['coffee', 'Jacobs']
 );
 
-var main = register.getInstance('Main', window, console);
-main.greet();
+rg.getInstance('coffeeMaker').brew('Mike');
+/*
+var coffee = 'Jacobs',
+    electricity = new Electricity(),
+    grinder = new Grinder(electricity, coffee),
+    heater = new Heater(electricity),
+    pump = new Pump(heater, electricity),
+    coffeeMaker = new CoffeeMaker(grinder, pump);
+
+coffeeMaker.brew('Mike');
+*/
