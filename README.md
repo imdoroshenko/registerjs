@@ -92,3 +92,25 @@ var firstDependency = 'first dependency from global ns',
     secondDepenency = 'the second one';
 rg.getInstance('Service'); //'first dependency from global ns', 'the second one'
 ```
+####Arguments
+DI container still allow you to pass arguments to class constructor
+```js
+rg.registerClass('Service', function ($firstDependency, fisrtArgument, $secondDepenency, secondArgument) {
+ console.log('$firstDependency ->', $firstDependency);
+ console.log('fisrtArgument ->', fisrtArgument);
+ console.log('$secondDepenency ->', $secondDepenency);
+ console.log('secondArgument ->', secondArgument);
+});
+rg.registerInjections({
+ firstDependency: 'first dependency',
+ secondDepenency: 'secondDepenency dependency',
+});
+rg.getInstance('Service', 'first argument', 'second argument'); 
+```
+output:
+```
+$firstDependency -> first dependency 
+fisrtArgument -> first argument 
+$secondDepenency -> secondDepenency dependency 
+secondArgument -> second argument 
+```
