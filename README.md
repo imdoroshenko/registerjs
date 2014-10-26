@@ -203,6 +203,8 @@ rg.registerInjections(
     ['electricity', new Electricity()],
     ['coffee', 'Jacobs']
 );
+
+rg.getInstance('coffeeMaker').brew('Mike');
 ```
 output:
 ```
