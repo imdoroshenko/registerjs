@@ -79,7 +79,16 @@ rg.registerClass('Service', Service, {firstDependency : 'Dependency attached to 
  */
 rg.registerInjection('secondDepenency', 'dependency from registerjs repository');
 /**
- * Now lets instanciete this Service
+ * Now lets instantiate this Service
  */
 new Service(); //'Dependency attached to DI container', 'dependency from registerjs repository'
+```
+So when you instantiate registerjs class he will look for DI container dependencies in first place, then he will check registerjs injections repository, and for the last he will check global namespace. So next code will works to.
+```js
+rg.registerClass('Service', function ($firstDependency, $secondDepenency) {
+ console.log($firstDependency, $secondDepenency);
+});
+var firstDependency = 'first dependency from global ns',
+    secondDepenency = 'the second one';
+new Service(); //'first dependency from global ns', 'the second one'
 ```
