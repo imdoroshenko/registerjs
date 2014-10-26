@@ -23,7 +23,7 @@ var consoleOut = function (str) {
 };
 // alert output method
 var alertOut = function (str) {
-  window.aler(str);
+  window.alert(str);
 };
 ```
 You basicly can use this service without any DI framework. But in this case you must remember and handle it dependencies in every place you want instantiate this service.
