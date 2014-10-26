@@ -32,8 +32,7 @@ var alertOut = function (str) {
   window.aler(str);
 };
 ```
-You basicly can use this service without any DI framework. But in this case you must remember and handle it
-dependencies in every place you want instantiate this service.
+You basicly can use this service without any DI framework. But in this case you must remember and handle it dependencies in every place you want instantiate this service.
 
 ```js
 var consoleGreeter = new Greeter(consoleOut, 'Hello'),
@@ -64,4 +63,23 @@ entities `consoleGreeter` and `alertGreeter` is still instances of `Greeter`.
 ```js
 console.log(consoleGreeter instanceof Greeter); //true
 console.log(alertGreeter instanceof Greeter); //true
+```
+####Register Injection
+In expample with `Greeter` we declared it dependencies in moment of creation DI container. This dependencies will be attached to DI container, and used by default with highest priority. But there is others approaches to declare dependencied. 
+```js
+/**
+ * Lets create Service with two dependencies and register it  only with one of them.
+ */
+var Service = function ($firstDependency, $secondDepenency) {
+ console.log($firstDependency, $secondDepenency);
+};
+rg.registerClass('Service', Service, {firstDependency : 'Dependency attached to DI container'});
+/**
+ * Second dependency we will register in global registerjs injections repository
+ */
+rg.registerInjection('secondDepenency', 'dependency from registerjs repository');
+/**
+ * Now lets instanciete this Service
+ */
+new Service(); //'Dependency attached to DI container', 'dependency from registerjs repository'
 ```
