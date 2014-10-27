@@ -61,7 +61,7 @@ console.log(alertGreeter instanceof Greeter); //true
 ####Register Injection
 In expample with `Greeter` we declared it dependencies in moment of creation DI container. This dependencies will be attached to DI container, and used by default with highest priority. But there is others approaches to declare dependencied. 
 ```js
-// Lets create Service with two dependencies and register it  only with one of them.
+// Lets create Service with two dependencies but register only with one of them.
 var Service = function ($firstDependency, $secondDepenency) {
  console.log($firstDependency, $secondDepenency);
 };
