@@ -35,14 +35,14 @@ RegisterClass.prototype = {
     getType : function(){
         return this._func;
     },
-    getConstructor : function(args){
+    getConstructor : function(args, ctx){
         var injections = this.extractInjections();
         for(var i = 0; args && args[0]; i++){
             if(injections[i] === this.undefined){
                 injections[i] = args.shift();
             }
         }
-        return (Function.prototype.bind.apply(this._func, [null].concat(injections)))
+        return (Function.prototype.bind.apply(this._func, [ctx||null].concat(injections)));
     },
     _extract : function(str){
         try{
@@ -63,9 +63,17 @@ RegisterClass.prototype = {
                 ? (this._ownInjections[name] || this._globalInjections[name] || this._extract(name) || null)
                 : this.undefined;
             if(entity && entity instanceof this.static){
-                entity = name[0].toUpperCase() === name[0]
-                    ? entity.getConstructor()
-                    : entity.getInstance();
+                if (name[0].toUpperCase() === name[0]) {
+                    entity = (function Closure(rgClass) {
+                        return function DIContainer() {
+                            return this.constructor === DIContainer
+                                ? new (rgClass.getConstructor(Array.prototype.slice.call(arguments, 0)))
+                                : (rgClass.getConstructor(Array.prototype.slice.call(arguments, 0), this)).call(this);
+                        };
+                    })(entity);
+                }else {
+                    entity = entity.getInstance();
+                }
             }
             extractedInjections.push(entity);
         }
