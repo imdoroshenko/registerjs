@@ -8,8 +8,8 @@ var RegisterClass = function RegisterClass(func, injections, globalInjections){
 };
 RegisterClass.prototype = {
     /*
-    * thanks to angularjs team
-    * */
+     * thanks to angularjs team
+     * */
     FN_ARGS : /^function\s*[^\(]*\(\s*([^\)]*)\)/m,
     FN_ARG_SPLIT : /\s*,\s*/,
     FN_ARG : /^\s*(_?)(\S+?)\1\s*$/,
@@ -37,12 +37,13 @@ RegisterClass.prototype = {
     },
     getConstructor : function(args, ctx){
         var injections = this.extractInjections();
-        for(var i = 0; args && args[0]; i++){
+        for(var i = 0, ai = 0, aln = args? args.length : 0; ai < aln; i++){
             if(injections[i] === this.undefined){
-                injections[i] = args.shift();
+                injections[i] = args[ai++];
             }
         }
-        return (Function.prototype.bind.apply(this._func, [ctx||null].concat(injections)));
+        injections.unshift(ctx||null);
+        return (Function.prototype.bind.apply(this._func, injections));
     },
     _extract : function(str){
         try{
@@ -55,22 +56,24 @@ RegisterClass.prototype = {
             return undefined;
         }
     },
+    _emptyArray: [],
+    _createDIContainer : function (rgClass) {
+        return function DIContainer() {
+            return this.constructor === DIContainer
+                ? new (rgClass.getConstructor(arguments))
+                : (rgClass.getConstructor(arguments, this)).call(this);
+        };
+    },
     extractInjections : function(){
         var extractedInjections = [];
-        for(var i = 0, ln = this._args.length; i < ln; i++){
+        for(var i = 0; i < this._argsLn; i++){
             var name = this._args[i];
             var entity = name
                 ? (this._ownInjections[name] || this._globalInjections[name] || this._extract(name) || null)
                 : this.undefined;
-            if(entity && entity instanceof this.static){
+            if(entity && entity.static === this.static){
                 if (name[0].toUpperCase() === name[0]) {
-                    entity = (function Closure(rgClass) {
-                        return function DIContainer() {
-                            return this.constructor === DIContainer
-                                ? new (rgClass.getConstructor(Array.prototype.slice.call(arguments, 0)))
-                                : (rgClass.getConstructor(Array.prototype.slice.call(arguments, 0), this)).call(this);
-                        };
-                    })(entity);
+                    entity = this._createDIContainer(entity);
                 }else {
                     entity = entity.getInstance();
                 }
