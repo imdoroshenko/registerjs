@@ -39,6 +39,9 @@ Register.prototype = {
     },
     getInjection: function(name){
         return this.injections[name];
+    },
+    'get': function (name) {
+        return this.injections[name];
     }
 };
 var RegisterClass = function RegisterClass(func, injections, globalInjections){
@@ -46,6 +49,7 @@ var RegisterClass = function RegisterClass(func, injections, globalInjections){
     this._func = func;
     this._ownInjections = injections||{};
     this._globalInjections = globalInjections||{};
+    this._instantiate = {};
     this._args = this.extractArgs(this._func.toString());
     this._argsLn = this._args.length;
 };
@@ -61,13 +65,20 @@ RegisterClass.prototype = {
     undefined : void 0,
     extractArgs : function(source){
         var args = [],
+            my = this,
             fnText = source.replace(this.STRIP_COMMENTS, ''),
             argDecl = fnText.match(this.FN_ARGS);
         argDecl && argDecl[1] && argDecl[1].split(this.FN_ARG_SPLIT).forEach(function(arg){
-            arg.replace(this.FN_ARG, function(all, underscore, name){
-                args.push(name.indexOf('$') === 0
-                    ? name.substr(1)
-                    : null);
+            arg.replace(this.FN_ARG, function (all, underscore, name) {
+                if (name.indexOf('$$') === 0) {
+                    name = name.substr(2);
+                    my._instantiate[name] = true;
+                } else if (name.indexOf('$') === 0) {
+                    name = name.substr(1);
+                } else {
+                    name = null;
+                }
+                args.push(name);
             });
         }.bind(this));
         return args;
@@ -114,11 +125,11 @@ RegisterClass.prototype = {
             var entity = name
                 ? (this._ownInjections[name] || this._globalInjections[name] || this._extract(name) || null)
                 : this.undefined;
-            if(entity && entity.static === this.static){
-                if (name[0].toUpperCase() === name[0]) {
-                    entity = this._createDIContainer(entity);
-                }else {
+            if(entity && entity.static === this.static) {
+                if (this._instantiate[name]) {
                     entity = entity.getInstance();
+                } else {
+                    entity = this._createDIContainer(entity);
                 }
             }
             extractedInjections.push(entity);

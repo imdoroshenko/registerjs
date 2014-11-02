@@ -39,5 +39,8 @@ Register.prototype = {
     },
     getInjection: function(name){
         return this.injections[name];
+    },
+    'get': function (name) {
+        return this.injections[name];
     }
 };
