@@ -2,10 +2,5 @@
     "name": "registerjs",
     "author": "Ivan Doroshenko <i.m.doroshenko@gmail.com>",
     "version": "0.0.1",
-    "main": "main.js",
-    "devDependencies": {
-        "gulp": "~3.8.1",
-        "gulp-util": "^3.0.1",
-        "gulp-concat" : "^2.4.1"
-    }
+    "main": "src/register.js"
 }
