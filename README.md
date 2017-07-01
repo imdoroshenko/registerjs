@@ -82,7 +82,7 @@ rg.registerClass('Service', function ($firstDependency, $secondDependency) {
 const 
   firstDependency = 'first dependency from global ns',
   secondDepenency = 'the second one'
-rg.getInstance('Service'); //'first dependency from global ns', 'the second one'
+rg.getInstance('Service') //'first dependency from global ns', 'the second one'
 ```
 ####Arguments
 DI container still allow you to pass arguments to class constructor
@@ -93,12 +93,12 @@ rg.registerClass('Service',
  console.log('fisrtArgument ->', fisrtArgument)
  console.log('$secondDepenency ->', $secondDependency)
  console.log('secondArgument ->', secondArgument)
-});
+})
 rg.registerInjections({
  firstDependency: 'first dependency',
  secondDependency: 'second dependency',
-});
-rg.getInstance('Service', 'first argument', 'second argument'); 
+})
+rg.getInstance('Service', 'first argument', 'second argument')
 ```
 output:
 ```
@@ -165,13 +165,13 @@ Heater.prototype.boil = function () {
  * @param {Electricity} $electricity
  */
 const Pump = function ($heater, $electricity) {
-  this.heater = $heater;
-  this.electricity = $electricity;
+  this.heater = $heater
+  this.electricity = $electricity
 }
 Pump.prototype.pump = function () {
-  console.log('Pump water trough Heater');
-  this.electricity.use('Pump');
-  this.heater.boil();
+  console.log('Pump water trough Heater')
+  this.electricity.use('Pump')
+  this.heater.boil()
 }
 ```
 Lets use this classes by manualy handle their dependencies
@@ -182,9 +182,9 @@ const
   grinder = new Grinder(electricity, coffee),
   heater = new Heater(electricity),
   pump = new Pump(heater, electricity),
-  coffeeMaker = new CoffeeMaker(grinder, pump);
+  coffeeMaker = new CoffeeMaker(grinder, pump)
 
-coffeeMaker.brew('Mike');
+coffeeMaker.brew('Mike')
 ```
 output:
 ```
@@ -203,16 +203,16 @@ rg.registerClasses(
     ['grinder', Grinder],
     ['heater', Heater],
     ['pump', Pump]
-);
+)
 // Electricity does not have any dependencies
 // and we want to use single instance of it in all our classes
 // so lets register it like simple injection
 rg.registerInjections(
     ['electricity', new Electricity()],
     ['coffee', 'Jacobs']
-);
+)
 
-rg.getInstance('coffeeMaker').brew('Mike');
+rg.getInstance('coffeeMaker').brew('Mike')
 ```
 output:
 ```

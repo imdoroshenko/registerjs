@@ -53,13 +53,13 @@ Heater.prototype.boil = function () {
  * @param {Electricity} $electricity
  */
 const Pump = function ($heater, $electricity) {
-  this.heater = $heater;
-  this.electricity = $electricity;
+  this.heater = $heater
+  this.electricity = $electricity
 }
 Pump.prototype.pump = function () {
-  console.log('Pump water trough Heater');
-  this.electricity.use('Pump');
-  this.heater.boil();
+  console.log('Pump water trough Heater')
+  this.electricity.use('Pump')
+  this.heater.boil()
 }
 
 rg.registerClasses(
@@ -86,7 +86,7 @@ rg.getInstance('coffeeMaker').brew('Mike')
  grinder = new Grinder(electricity, coffee),
  heater = new Heater(electricity),
  pump = new Pump(heater, electricity),
- coffeeMaker = new CoffeeMaker(grinder, pump);
+ coffeeMaker = new CoffeeMaker(grinder, pump)
 
- coffeeMaker.brew('Mike');
+ coffeeMaker.brew('Mike')
  */

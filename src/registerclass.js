@@ -25,7 +25,7 @@ RegisterClass.prototype = {
         args.push(name.indexOf('$') === 0
           ? name.substr(1)
           : null)
-      });
+      })
     })
     return args
   },
@@ -36,7 +36,7 @@ RegisterClass.prototype = {
     return this._func
   },
   getConstructor : function(args, ctx){
-    let injections = this.extractInjections();
+    let injections = this.extractInjections()
     for(let i = 0; args && args[0]; i++){
       if(injections[i] === this.undefined){
         injections[i] = args.shift()
