@@ -7,9 +7,9 @@ const
  * @param {Grinder} $grinder
  * @param {Pump} $pump
  */
-const CoffeeMaker = function ($grinder, $pump) {
-  this.grinder = $grinder
-  this.pump = $pump
+const CoffeeMaker = function ($$grinder, $$pump) {
+  this.grinder = $$grinder
+  this.pump = $$pump
 }
 CoffeeMaker.prototype.brew = function (name) {
   console.log('brewing coffee for ' + name)
@@ -52,8 +52,8 @@ Heater.prototype.boil = function () {
  * @param {Heater} $heater
  * @param {Electricity} $electricity
  */
-const Pump = function ($heater, $electricity) {
-  this.heater = $heater
+const Pump = function ($$heater, $electricity) {
+  this.heater = $$heater
   this.electricity = $electricity
 }
 Pump.prototype.pump = function () {
