@@ -8,34 +8,29 @@ const RegisterClass = function RegisterClass(func, injections, globalInjections)
 }
 RegisterClass.prototype = {
   /*
-   * thanks to angularjs team
+   * https://stackoverflow.com/a/9924463
    * */
-  FN_ARGS: /^function\s*[^\(]*\(\s*([^\)]*)\)/m,
-  FN_ARG_SPLIT: /\s*,\s*/,
-  FN_ARG: /^\s*(_?)(\S+?)\1\s*$/,
-  STRIP_COMMENTS: /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg,
+  ARGUMENT_NAMES: /([^\s,]+)/g,
+  STRIP_COMMENTS: /(\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s*=[^,\)]*(('(?:\\'|[^'\r\n])*')|("(?:\\"|[^"\r\n])*"))|(\s*=[^,\)]*))/mg,
   global: global,
   undefined: void 0,
   'static': RegisterClass,
   extractArgs: function(source){
-    let
-      args = [],
-      fnText = source.replace(this.STRIP_COMMENTS, ''),
-      argDecl = fnText.match(this.FN_ARGS)
-    argDecl && argDecl[1] && argDecl[1].split(this.FN_ARG_SPLIT).forEach(arg => {
-      arg.replace(this.FN_ARG, (all, underscore, name) => {
-        if (name.indexOf('$$') === 0) {
-          name = name.substr(2)
-          this._instantiate[name] = true
-        } else if (name.indexOf('$') === 0) {
-          name = name.substr(1)
-        } else {
-          name = null
-        }
-        args.push(name)
-      })
+    source = source.replace(this.STRIP_COMMENTS, '')
+    let result = source
+      .slice(source.indexOf('(')+1, source.indexOf(')'))
+      .match(this.ARGUMENT_NAMES)
+    return (result === null ? [] : result).map(name => {
+      if (name.indexOf('$$') === 0) {
+        name = name.substr(2)
+        this._instantiate[name] = true
+      } else if (name.indexOf('$') === 0) {
+        name = name.substr(1)
+      } else {
+        name = null
+      }
+      return name
     })
-    return args
   },
   getInstance: function(args){
     return new (this.getConstructor(args))
