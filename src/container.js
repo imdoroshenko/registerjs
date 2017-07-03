@@ -1,11 +1,11 @@
 const
-  // https://stackoverflow.com/a/9924463
   ARGUMENT_NAMES = /([^\s,]+)/g,
   CONSTRUCT_ARGS = /constructor\s*\((.*)\)\s*\{/g,
+  // https://stackoverflow.com/a/9924463
   STRIP_COMMENTS = /(\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s*=[^,\)]*(('(?:\\'|[^'\r\n])*')|("(?:\\"|[^"\r\n])*"))|(\s*=[^,\)]*))/mg,
   IS_CLASS = /^class\s/,
-  SIMPLE = '$',
-  EXTENDED = '$$',
+  REQUEST_VALUE = '$',
+  REQUEST_INSTANCE = '$$',
   PRIMITIVE = 'primitive',
   FUNCTION = 'function',
   CLASS = 'class',
@@ -56,7 +56,7 @@ function getInjections(args) {
   let injections = []
   for (let i = 0, ln = args.length; i < ln; i++) {
     injections[i] = args[i] && REPOSITORY.has(args[i].get('name'))
-      ? args[i].get('type') === EXTENDED ?  new (REPOSITORY.get(args[i].get('name'))) : REPOSITORY.get(args[i].get('name'))
+      ? args[i].get('type') === REQUEST_INSTANCE ?  new (REPOSITORY.get(args[i].get('name'))) : REPOSITORY.get(args[i].get('name'))
       : null
   }
   return injections
@@ -83,15 +83,18 @@ function wrapFunction(func, diArgs) {
   return new Proxy(func, {
     apply(target, thisArg, currentArgs) {
       return target(...resolveArgs(getInjections(diArgs), currentArgs))
+    },
+    construct(target, currentArgs, newTarget) {
+      return Reflect.construct(target, resolveArgs(getInjections(diArgs), currentArgs))
     }
   })
 }
 
 function parseArguments(name) {
-  if (name.indexOf(EXTENDED) === 0) {
-    name = new Map([['name', name.substr(2)], ['type', EXTENDED]])
-  } else if (name.indexOf(SIMPLE) === 0) {
-    name = new Map([['name', name.substr(1)], ['type', SIMPLE]])
+  if (name.indexOf(REQUEST_INSTANCE) === 0) {
+    name = new Map([['name', name.substr(2)], ['type', REQUEST_INSTANCE]])
+  } else if (name.indexOf(REQUEST_VALUE) === 0) {
+    name = new Map([['name', name.substr(1)], ['type', REQUEST_VALUE]])
   } else {
     name = null
   }

@@ -3,7 +3,8 @@ const
   /*
    * container() function will not register injection but create DI container for current entity
    */
-  CoffeeMaker = container(require('./coffee-maker'))
+  CoffeeMaker = require('./coffee-maker'),
+  CoffeeMakerDI = container(CoffeeMaker)
 
 /*
  * After registration, entity will be available as injection across all modules in current app
@@ -14,8 +15,9 @@ register('Pump', require('./pump'))
 register('electricity', new (require('./electricity')))
 register('coffee', 'Jacobs')
 
+const coffeeMaker = new CoffeeMakerDI()
 
-new CoffeeMaker().brew('Mike')
+coffeeMaker.brew('Mike')
 
 /*
  var coffee = 'Jacobs',

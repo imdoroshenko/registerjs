@@ -1,6 +1,4 @@
-const
-  Registerjs = require('../src/register'),
-  rg = new Registerjs
+const {container, register} = require('../src/container')
 
 /**
  * CoffeeMaker
@@ -62,24 +60,14 @@ Pump.prototype.pump = function () {
   this.heater.boil()
 }
 
-rg.registerClasses(
-  ['coffeeMaker', CoffeeMaker],
-  ['grinder', Grinder],
-  ['heater', Heater],
-  ['pump', Pump]
-)
-/**
- * Electricity does not have any dependencies
- * and we want to use single instance of it in all our classes
- * so lets register in like simple injection
- */
 
-rg.registerInjections(
-  ['electricity', new Electricity()],
-  ['coffee', 'Jacobs']
-)
+register('grinder', Grinder)
+register('heater', Heater)
+register('pump', Pump)
+register('electricity', new Electricity())
+register('coffee', 'Jacobs')
 
-rg.getInstance('coffeeMaker').brew('Mike')
+;(new (container(CoffeeMaker))).brew('Mike')
 /*
  var coffee = 'Jacobs',
  electricity = new Electricity(),
