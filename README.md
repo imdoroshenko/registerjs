@@ -1,12 +1,6 @@
 registerjs
 ==========
 
-Dependency injection manager inspired by AngularJS [DI](https://docs.angularjs.org/guide/di)
-
-Work in progress.
-
-#Example
-
 ####Basic example
 Let us create simple service that greet user. It's required output method and greeting pharse.
 
